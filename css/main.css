@@ -1,8 +1,18 @@
+.list-group {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
 .card {
-  float: right;
+  float: left;
+}
+
+#fiveDayCard {
+  clear: both;
 }
 
 .container-search {
+  clear: both;
   margin-left: 200px;
   margin-bottom: 25px;
 }
