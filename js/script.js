@@ -6,7 +6,7 @@ $(document).ready(function () {
     usersList = searchList;
   }
 
-  // needs searchBoxElement.on("click", function(){ getWeather();}); for ajax request
+  // needs check to localStorage filter duplicates on submit button usersList.filter(function(item) {return item.id === id})
   usersList.forEach(function (city) {
     var searchBoxElement = $("<li>").text(city);
     searchBoxElement.attr("value", city);
@@ -33,13 +33,15 @@ $(document).ready(function () {
     getWeather();
     uvCall(); //not working FIX!
     clear();
+    $("#fiveDay").empty();
   });
 
   $(".btn").on("click", function (event) {
     event.preventDefault();
     var city = $(this).text();
     getWeather(city);
-    console.log(city);
+    // console.log(city);
+    $("#fiveDay").empty();
   });
 
   // 5 day function
@@ -61,16 +63,10 @@ $(document).ready(function () {
     }).then(function (response) {
       var locTime = "12:00:00";
       var cityName = response.city.name;
-      var date = "2020";
-      var cardFive = $("<div>").attr({
-        class: "card col-12",
-        id: "fiveDayCard",
-      });
-      // $("#fiveDay").append(card);
 
       response.list.forEach((city) => {
-        console.log(city.dt_txt);
-        if (city.dt_txt.includes(locTime) && city.dt_txt.includes(date)) {
+        // console.log(city.dt_txt);
+        if (city.dt_txt.includes(locTime)) {
           var tempKelvin = city.main.temp;
           var cityTemp = (((tempKelvin - 273.15) * 9) / 5 + 32).toFixed(2);
           var wind = city.wind.speed;
@@ -78,7 +74,7 @@ $(document).ready(function () {
           var weatherMain = city.weather[0].main;
           var weatherDescrip = city.weather[0].description;
           var weatherIcon = city.weather[0].icon;
-          var cityDate = city.dt_txt;
+          var cityDate = city.dt_txt + "pm";
           var renderDate = $("<div>").attr("class", "date").text(cityDate);
           var renderCity = $("<div>").attr("class", "city").text(cityName);
           var renderTemp = $("<div>")
@@ -89,7 +85,7 @@ $(document).ready(function () {
             .text("Humidity: " + humidity);
           var renderWind = $("<div>")
             .attr("class", "wind")
-            .text("wind: " + wind);
+            .text("Wind: " + wind);
           var renderWeather = $("<div>")
             .attr("class", "weather")
             .text(weatherMain);
@@ -120,9 +116,9 @@ $(document).ready(function () {
             renderDescript,
             imgIcon
           );
-
-          // $("#fiveDay").append("UV Index: " + uvResponse);
-          // $(".currentDay").text(day);
+          $("#fiveDay").append(card);
+          // $(".UV").text(uvResponse);
+          $(".currentDay").text(cityDate);
           $(".cityDay").text(cityName);
           $(".currentTempDay").text("Temp: " + cityTemp);
           $(".humidityDay").text("Humidity: " + humidity + "%");
@@ -133,7 +129,6 @@ $(document).ready(function () {
             "src",
             "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
           );
-          $("#fiveDay").append(card);
         }
       });
     });
@@ -150,7 +145,7 @@ $(document).ready(function () {
       url: queryURL,
       method: "GET",
     }).then(function (response) {
-      var uvResponse = response.value;
+      var uvResponse = "UV Index: " + response.value;
       return uvResponse;
       console.log("uv index: " + uvResponse);
     });
