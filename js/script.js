@@ -10,7 +10,10 @@ $(document).ready(function () {
   usersList.forEach(function (city) {
     var searchBoxElement = $("<li>").text(city);
     searchBoxElement.attr("value", city);
-    searchBoxElement.attr({ id: "searchList", class: "list-group-item btn" });
+    searchBoxElement.attr({
+      id: "searchList",
+      class: "list-group-item btn cityBtn",
+    });
     $("#searchList").after(searchBoxElement);
   });
 
@@ -21,27 +24,27 @@ $(document).ready(function () {
       return;
     }
     var searchBoxElement = $("#searchInput").val().trim();
-    usersList.push(searchBoxElement);
-    var userSearch = $("<button>").text(searchBoxElement);
-    localStorage.setItem("users", JSON.stringify(usersList));
-    userSearch.attr("id", searchBoxElement);
-    userSearch.attr({
-      class: "list-group-item btn",
-    });
-    $("#searchInput").empty(searchBoxElement);
-    $("#searchList").after(userSearch);
-    getWeather();
-    uvCall(); //not working FIX!
-    clear();
-    $("#fiveDay").empty();
+    if (!usersList.includes(searchBoxElement)) {
+      usersList.push(searchBoxElement);
+      var userSearch = $("<button>").text(searchBoxElement);
+      localStorage.setItem("users", JSON.stringify(usersList));
+      userSearch.attr("id", searchBoxElement);
+      userSearch.attr({
+        class: "list-group-item btn cityBtn",
+      });
+      $("#searchList").after(userSearch);
+    }
+    $("#searchInput").val("");
+    getWeather(searchBoxElement);
+    $("#fiveDayRow").empty();
   });
 
-  $(".btn").on("click", function (event) {
+  $(".cityBtn").on("click", function (event) {
     event.preventDefault();
     var city = $(this).text();
     getWeather(city);
     // console.log(city);
-    $("#fiveDay").empty();
+    $("#fiveDayRow").empty();
   });
 
   // 5 day function
@@ -49,7 +52,7 @@ $(document).ready(function () {
     if (city) {
       searchBoxElement = city;
     } else {
-      var searchBoxElement = $("#searchInput").val().trim(); // need to be generic to work with localStorage.list(userList.forEach) - btn
+      var searchBoxElement = $("#searchInput").val().trim();
     }
     var apiKey = "22bcc8be8c461f292dcdb3783f0b7dde";
     var queryURL =
@@ -63,7 +66,8 @@ $(document).ready(function () {
     }).then(function (response) {
       var locTime = "12:00:00";
       var cityName = response.city.name;
-
+      var i = 0;
+      console.log(response);
       response.list.forEach((city) => {
         // console.log(city.dt_txt);
         if (city.dt_txt.includes(locTime)) {
@@ -99,7 +103,6 @@ $(document).ready(function () {
           });
           var lat = response.city.coord.lat;
           var long = response.city.coord.lon;
-          uvCall(lat, long);
 
           var card = $("<div>").attr({
             class: "card col-3",
@@ -116,19 +119,28 @@ $(document).ready(function () {
             renderDescript,
             imgIcon
           );
-          $("#fiveDay").append(card);
-          // $(".UV").text(uvResponse);
-          $(".currentDay").text(cityDate);
-          $(".cityDay").text(cityName);
-          $(".currentTempDay").text("Temp: " + cityTemp);
-          $(".humidityDay").text("Humidity: " + humidity + "%");
-          $(".windDay").text("Wind: " + wind);
-          $(".weatherDay").text(weatherMain);
-          $(".descriptionDay").text(weatherDescrip);
-          $(".imgDay").attr(
-            "src",
-            "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
-          );
+          $("#fiveDay").after(card);
+          $("#fiveDayRow").append(card);
+
+          if (i === 0) {
+            uvCall(lat, long).then(function (response) {
+              var uvResponse = "UV Index: " + response.value;
+              console.log("uv index: " + uvResponse);
+              $(".UV").text(uvResponse);
+              $(".currentDay").text(cityDate);
+              $(".cityDay").text(cityName);
+              $(".currentTempDay").text("Temp: " + cityTemp);
+              $(".humidityDay").text("Humidity: " + humidity + "%");
+              $(".windDay").text("Wind: " + wind);
+              $(".weatherDay").text(weatherMain);
+              $(".descriptionDay").text(weatherDescrip);
+              $(".imgDay").attr(
+                "src",
+                "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
+              );
+            });
+            i++;
+          }
         }
       });
     });
@@ -141,13 +153,9 @@ $(document).ready(function () {
       "&lon=" +
       long;
 
-    $.ajax({
+    return $.ajax({
       url: queryURL,
       method: "GET",
-    }).then(function (response) {
-      var uvResponse = "UV Index: " + response.value;
-      return uvResponse;
-      console.log("uv index: " + uvResponse);
     });
   }
 
