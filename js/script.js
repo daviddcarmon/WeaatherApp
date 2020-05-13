@@ -97,7 +97,7 @@ $(document).ready(function () {
             .attr("class", "description")
             .text(weatherDescrip);
           var imgIcon = $("<img>").attr({
-            src: "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png",
+            src: "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png",
             alt: "weatherIcon",
             class: "img",
           });
@@ -126,7 +126,10 @@ $(document).ready(function () {
             uvCall(lat, long).then(function (response) {
               var uvResponse = "UV Index: " + response.value;
               console.log("uv index: " + uvResponse);
-
+              var dayDiv = $("<div>").attr({
+                class: "card-body",
+                id: "currentForecast",
+              });
               // <div class="row" id="dayForecast">
               // <div class="card-body">
               //   <div class="currentDay"></div>
@@ -153,7 +156,7 @@ $(document).ready(function () {
               $(".descriptionDay").text(weatherDescrip);
               $(".imgDay").attr(
                 "src",
-                "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
+                "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
               );
             });
             i++;
@@ -165,7 +168,7 @@ $(document).ready(function () {
 
   function uvCall(lat, long) {
     var queryURL =
-      "http://api.openweathermap.org/data/2.5/uvi?appid=22bcc8be8c461f292dcdb3783f0b7dde&lat=" +
+      "https://api.openweathermap.org/data/2.5/uvi?appid=22bcc8be8c461f292dcdb3783f0b7dde&lat=" +
       lat +
       "&lon=" +
       long;
