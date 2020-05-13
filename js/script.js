@@ -126,6 +126,23 @@ $(document).ready(function () {
             uvCall(lat, long).then(function (response) {
               var uvResponse = "UV Index: " + response.value;
               console.log("uv index: " + uvResponse);
+
+              // <div class="row" id="dayForecast">
+              // <div class="card-body">
+              //   <div class="currentDay"></div>
+              //   <div class="cityDay"></div>
+
+              //   <div class="currentTempDay"></div>
+              //   <div class="humidityDay"></div>
+              //   <div class="wind"></div>
+              //   <div class="UV"></div>
+
+              //   <div class="weatherDay"></div>
+              //   <div class="descriptionDay"></div>
+              //   <img src="" alt="weatherIcon" class="imgDay" />
+              // </div>
+              // </div>
+
               $(".UV").text(uvResponse);
               $(".currentDay").text(cityDate);
               $(".cityDay").text(cityName);
