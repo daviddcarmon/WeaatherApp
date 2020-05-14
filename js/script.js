@@ -8,13 +8,37 @@ $(document).ready(function () {
 
   // needs check to localStorage filter duplicates on submit button usersList.filter(function(item) {return item.id === id})
   usersList.forEach(function (city) {
-    var searchBoxElement = $("<li>").text(city);
+    var searchBoxElement = $("<button>").text(city);
     searchBoxElement.attr("value", city);
     searchBoxElement.attr({
       id: "searchList",
       class: "list-group-item btn cityBtn",
     });
-    $("#searchList").after(searchBoxElement);
+    $("#searchList").append(searchBoxElement);
+  });
+
+  $(document).on("keypress", "input", function (e) {
+    if (e.which === 13) {
+      e.preventDefault();
+      if ($("#searchInput").val().trim() === "") {
+        return;
+      }
+      var searchBoxElement = $("#searchInput").val().trim();
+      if (!usersList.includes(searchBoxElement)) {
+        usersList.push(searchBoxElement);
+        var userSearch = $("<button>").text(searchBoxElement);
+        localStorage.setItem("users", JSON.stringify(usersList));
+        userSearch.attr("id", searchBoxElement);
+        userSearch.attr({
+          class: "list-group-item btn cityBtn",
+        });
+        $("#searchList").prepend(userSearch);
+      }
+      $("#searchInput").val("");
+      getWeather(searchBoxElement);
+      $("#dayForecast").empty();
+      $("#fiveDayRow").empty();
+    }
   });
 
   $("#searchBtn").on("click", function (event) {
@@ -32,10 +56,11 @@ $(document).ready(function () {
       userSearch.attr({
         class: "list-group-item btn cityBtn",
       });
-      $("#searchList").after(userSearch);
+      $("#searchList").prepend(userSearch);
     }
     $("#searchInput").val("");
     getWeather(searchBoxElement);
+    $("#dayForecast").empty();
     $("#fiveDayRow").empty();
   });
 
@@ -44,6 +69,7 @@ $(document).ready(function () {
     var city = $(this).text();
     getWeather(city);
     // console.log(city);
+    $("#dayForecast").empty();
     $("#fiveDayRow").empty();
   });
 
@@ -68,6 +94,7 @@ $(document).ready(function () {
       var cityName = response.city.name;
       var i = 0;
       console.log(response);
+
       response.list.forEach((city) => {
         // console.log(city.dt_txt);
         if (city.dt_txt.includes(locTime)) {
@@ -127,9 +154,33 @@ $(document).ready(function () {
               var uvResponse = "UV Index: " + response.value;
               console.log("uv index: " + uvResponse);
               var dayDiv = $("<div>").attr({
-                class: "card-body",
+                class: "card-body card",
                 id: "currentForecast",
               });
+              $("#dayForecast").append(dayDiv);
+              var uvDiv = $("<div>").text(uvResponse);
+              var dateDiv = $("<div>").text(cityDate);
+              var nameCityDiv = $("<div>").text(cityName);
+              var tempDiv = $("<div>").text("Temp: " + cityTemp);
+              var humidityDiv = $("<div>").text("Humidity: " + humidity + "%");
+              var windDiv = $("<div>").text("Wind: " + wind);
+              var weatherDiv = $("<div>").text(weatherMain);
+              var descriptionDiv = $("<div>").text(weatherDescrip);
+              var iconImg = $("<img>").attr(
+                "src",
+                "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
+              );
+              $("#currentForecast").append(
+                nameCityDiv,
+                dateDiv,
+                tempDiv,
+                humidityDiv,
+                windDiv,
+                weatherDiv,
+                descriptionDiv,
+                uvDiv,
+                iconImg
+              );
               // <div class="row" id="dayForecast">
               // <div class="card-body">
               //   <div class="currentDay"></div>
@@ -145,19 +196,6 @@ $(document).ready(function () {
               //   <img src="" alt="weatherIcon" class="imgDay" />
               // </div>
               // </div>
-
-              $(".UV").text(uvResponse);
-              $(".currentDay").text(cityDate);
-              $(".cityDay").text(cityName);
-              $(".currentTempDay").text("Temp: " + cityTemp);
-              $(".humidityDay").text("Humidity: " + humidity + "%");
-              $(".windDay").text("Wind: " + wind);
-              $(".weatherDay").text(weatherMain);
-              $(".descriptionDay").text(weatherDescrip);
-              $(".imgDay").attr(
-                "src",
-                "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
-              );
             });
             i++;
           }
