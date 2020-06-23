@@ -146,7 +146,7 @@ $(document).ready(function () {
             renderDescript,
             imgIcon
           );
-          $("#fiveDay").after(card);
+          // $("#fiveDay").after(card);
           $("#fiveDayRow").append(card);
 
           if (i === 0) {

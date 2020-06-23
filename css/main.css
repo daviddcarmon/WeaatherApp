@@ -1,3 +1,12 @@
+/* html {
+  background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSIW2fkxZ1VD-KFmMEgABYJ6M2Pew9pbaa1dbC8_0FRu8lhzAV4&usqp=CAU")
+    no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+} */
+
 .list-group {
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
@@ -11,4 +20,23 @@
   clear: both;
   margin-left: 200px;
   margin-bottom: 25px;
+}
+
+body {
+  background-image: url(/WeatherApp/images/weatherApp.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.card-body,
+#fiveDayCard,
+#searchList,
+.list-group {
+  background-color: rgba(255, 254, 254, 0.308);
+  font-weight: bolder;
+}
+
+#searchBtn{
+  background-color: rgba(255, 254, 254, 0.479);
+  font-weight: bolder;
 }
